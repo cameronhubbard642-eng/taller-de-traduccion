@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="#f8f9fa"/>
+
+  <!-- Outer frame - symbolic of library/book -->
+  <rect x="80" y="80" width="864" height="864" fill="none" stroke="#2d5a8c" stroke-width="24"/>
+
+  <!-- Inner decorative frame - layered depth -->
+  <rect x="140" y="140" width="744" height="744" fill="none" stroke="#4a7fb5" stroke-width="12"/>
+
+  <!-- Central geometric labyrinth pattern inspired by Borges -->
+  <!-- This represents the infinite library and forking paths -->
+
+  <!-- Horizontal lines creating library shelves -->
+  <line x1="200" y1="300" x2="824" y2="300" stroke="#4a7fb5" stroke-width="16"/>
+  <line x1="200" y1="400" x2="824" y2="400" stroke="#4a7fb5" stroke-width="16"/>
+  <line x1="200" y1="512" x2="824" y2="512" stroke="#4a7fb5" stroke-width="16"/>
+  <line x1="200" y1="624" x2="824" y2="624" stroke="#4a7fb5" stroke-width="16"/>
+  <line x1="200" y1="724" x2="824" y2="724" stroke="#4a7fb5" stroke-width="16"/>
+
+  <!-- Vertical lines creating labyrinth structure -->
+  <line x1="300" y1="200" x2="300" y2="824" stroke="#4a7fb5" stroke-width="16"/>
+  <line x1="412" y1="200" x2="412" y2="824" stroke="#4a7fb5" stroke-width="16"/>
+  <line x1="512" y1="200" x2="512" y2="824" stroke="#4a7fb5" stroke-width="16"/>
+  <line x1="612" y1="200" x2="612" y2="824" stroke="#4a7fb5" stroke-width="16"/>
+  <line x1="724" y1="200" x2="724" y2="824" stroke="#4a7fb5" stroke-width="16"/>
+
+  <!-- Secondary vertical lines for complexity -->
+  <line x1="356" y1="300" x2="356" y2="724" stroke="#6b96d6" stroke-width="12" opacity="0.7"/>
+  <line x1="468" y1="250" x2="468" y2="774" stroke="#6b96d6" stroke-width="12" opacity="0.7"/>
+  <line x1="668" y1="300" x2="668" y2="724" stroke="#6b96d6" stroke-width="12" opacity="0.7"/>
+  <line x1="780" y1="250" x2="780" y2="774" stroke="#6b96d6" stroke-width="12" opacity="0.7"/>
+
+  <!-- Diagonal elements - representing forking paths and mirrors -->
+  <line x1="250" y1="250" x2="350" y2="350" stroke="#3d6fa0" stroke-width="14" opacity="0.6"/>
+  <line x1="674" y1="250" x2="774" y2="350" stroke="#3d6fa0" stroke-width="14" opacity="0.6"/>
+  <line x1="250" y1="774" x2="350" y2="674" stroke="#3d6fa0" stroke-width="14" opacity="0.6"/>
+  <line x1="674" y1="774" x2="774" y2="674" stroke="#3d6fa0" stroke-width="14" opacity="0.6"/>
+
+  <!-- Central mirror-like circular element -->
+  <circle cx="512" cy="512" r="80" fill="none" stroke="#4a7fb5" stroke-width="16"/>
+  <circle cx="512" cy="512" r="50" fill="none" stroke="#6b96d6" stroke-width="12" opacity="0.7"/>
+
+  <!-- Cross in center - axis point -->
+  <line x1="512" y1="460" x2="512" y2="564" stroke="#4a7fb5" stroke-width="14"/>
+  <line x1="460" y1="512" x2="564" y2="512" stroke="#4a7fb5" stroke-width="14"/>
+
+  <!-- Small accent dots at intersection points - representing infinite library -->
+  <circle cx="300" cy="300" r="8" fill="#4a7fb5"/>
+  <circle cx="412" cy="400" r="8" fill="#4a7fb5"/>
+  <circle cx="512" cy="300" r="8" fill="#4a7fb5"/>
+  <circle cx="612" cy="400" r="8" fill="#4a7fb5"/>
+  <circle cx="724" cy="300" r="8" fill="#4a7fb5"/>
+  <circle cx="300" cy="512" r="8" fill="#4a7fb5"/>
+  <circle cx="724" cy="512" r="8" fill="#4a7fb5"/>
+  <circle cx="300" cy="724" r="8" fill="#4a7fb5"/>
+  <circle cx="412" cy="624" r="8" fill="#4a7fb5"/>
+  <circle cx="512" cy="724" r="8" fill="#4a7fb5"/>
+  <circle cx="612" cy="624" r="8" fill="#4a7fb5"/>
+  <circle cx="724" cy="724" r="8" fill="#4a7fb5"/>
+</svg>

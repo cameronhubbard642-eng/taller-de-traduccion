@@ -1,0 +1,45 @@
+Borges-Themed "Taller de Traducción" App Icon
+==============================================
+
+Design Inspiration:
+- Labyrinth motif: Central geometric grid representing Borges's "House of Asterion"
+- Infinite Library: Horizontal lines evoking library shelves
+- Forking Paths: Diagonal elements suggesting multiple directions and choices
+- Mirrors: Central circular element creating reflective symmetry
+- Tiger: Implicit in the geometric structure's predatory precision
+
+Color Palette:
+- Primary: #4a7fb5 (Borges Blue)
+- Darker accent: #2d5a8c
+- Lighter accent: #6b96d6
+- Background: #f8f9fa
+
+Structure:
+- 1024x1024 SVG viewBox (scalable from 16px to 1024px)
+- Clean geometric design optimized for legibility at all sizes
+- Grid-based composition referencing ordered knowledge systems
+
+Files Generated:
+================
+
+Main SVG:
+  /sessions/cool-vibrant-babbage/mnt/Spanish/AppIcon.svg
+
+Iconset (macOS compatible):
+  /sessions/cool-vibrant-babbage/mnt/Spanish/AppIcon.iconset/
+    - icon_16x16.png (16px)
+    - icon_16x16@2x.png (32px)
+    - icon_32x32.png (32px)
+    - icon_32x32@2x.png (64px)
+    - icon_128x128.png (128px)
+    - icon_128x128@2x.png (256px)
+    - icon_256x256.png (256px)
+    - icon_256x256@2x.png (512px)
+    - icon_512x512.png (512px)
+    - icon_512x512@2x.png (1024px)
+
+Web Icons:
+  /sessions/cool-vibrant-babbage/mnt/Spanish/icon-192.png
+  /sessions/cool-vibrant-babbage/mnt/Spanish/icon-512.png
+
+All icons maintain geometric clarity and visual impact across scales.
