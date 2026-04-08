@@ -14407,7 +14407,7 @@ class App {
     if (!/(?:ar|er|ir|arse|erse|irse)$/.test(lo)) return false;
     if (dict && dict[lo]) {
       const pos = dict[lo].pos;
-      if (pos === "ADJ" || pos === "ADV" || pos === "PRON" || pos === "PREP" || pos === "CONJ" || pos === "ART" || pos === "NUM") return false;
+      if (pos === "ADJ" || pos === "ADV" || pos === "PRON" || pos === "PREP" || pos === "CONJ" || pos === "DET" || pos === "NUM") return false;
       if (pos === "NOUN") return false;
     }
     return true;
@@ -14418,7 +14418,7 @@ class App {
     const lo = w.toLowerCase();
     if (dict && dict[lo]) {
       const pos = dict[lo].pos;
-      if (pos === "NOUN" || pos === "PREP" || pos === "CONJ" || pos === "ART" || pos === "NUM" || pos === "PRON") return false;
+      if (pos === "NOUN" || pos === "PREP" || pos === "CONJ" || pos === "DET" || pos === "NUM" || pos === "PRON") return false;
     }
     if (/[ai]do$/.test(lo) && lo.length > 4) return true;
     const irregulars = new Set(["hecho","dicho","escrito","visto","puesto","vuelto","muerto","abierto","roto","cubierto","descubierto","resuelto","devuelto","envuelto","satisfecho","impreso","frito","absuelto","compuesto","dispuesto","expuesto","impuesto","opuesto","propuesto","supuesto"]);
