@@ -15311,10 +15311,10 @@ Format your response as JSON: {"score": NUMBER, "feedback": "TEXT"}`;
         document.getElementById("toolbar").style.display = "none";
         const welcome = document.getElementById("translation-welcome");
         welcome.innerHTML = `<h4>About Translation Practice</h4>
-          <p>The heart of this workshop is translating complete literary texts and passages in their entirety. The individual exercises break longer works into digestible segments, making it manageable to work through substantial pieces by Borges, Neruda, and other authors while maintaining the coherence and context of each work as a whole.</p>
-          <p>Select an author from the tabs at the top of the sidebar, then choose a passage from the list to begin. Each passage displays the original Spanish text — click any word to see its gloss and part of speech.</p>
-          <p>Type your English translation in the input area, then click <strong>Evaluate</strong> for AI-powered feedback on accuracy and style. Use <strong>Show Reference</strong> to compare with a published translation.</p>
-          <p>Your progress is tracked in the bar at the top of the sidebar. A passage is marked complete once evaluated. To add custom texts or reset progress, use the Settings menu.</p>`;
+          <p>The heart of this workshop is translating complete literary texts and passages in their entirety. The individual exercises break longer works into digestible segments, making it manageable to work through short stories by Borges, poems by Neruda, and the preface and first chapter of <em>Manual de Construcción en Tierra</em> while maintaining the coherence and context of each work as a whole.</p>
+          <p>Select an author from the tabs at the top of the sidebar, then choose a passage from the list to begin. Each passage displays the original Spanish text — click any word to see its gloss. Parts of Speech are highlighted and color-coded. POS coding can be optionally hidden. Words are automatically glossed in-line the first time they appear in a text. You can toggle automatic glossing, full in-line glosses, or completely hide them.</p>
+          <p>Type your English translation in the input area, then click <strong>Evaluate</strong> for AI-powered feedback on accuracy and style. The evaluation will use the AI corresponding to the API key saved in Settings. <strong>Hint</strong> gives an AI-powered hint based on your current translation. Use <strong>Show Reference</strong> to compare with a published translation.</p>
+          <p>Your progress is tracked in the bar at the top of the sidebar. A passage is marked complete once evaluated. To add custom texts or reset progress, use the menu under <strong>Settings</strong>.</p>`;
         welcome.style.display = "";
         document.getElementById("translation-body").style.display = "none";
       } else {
