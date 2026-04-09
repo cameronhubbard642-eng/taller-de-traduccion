@@ -2824,8 +2824,8 @@ const DICT = {
   "a": { pos: "PREP", gloss: "to/at" },
   "ab": { pos: "NOUN", gloss: "from (Latin)" },
   "abajo": { pos: "ADV", gloss: "below" },
-  "abandonada": { pos: "ADJ", gloss: "abandoned (f.)" },
-  "abandonado": { pos: "ADJ", gloss: "abandoned" },
+  "abandonada": { pos: "ADJ", gloss: "abandoned (f.)", lemma: "abandonado" },
+  "abandonado": { pos: "ADJ", gloss: "abandoned", lemma: "abandonar" },
   "abandonan": { pos: "VERB", gloss: "they abandon" },
   "abandonar": { pos: "VERB", gloss: "to abandon", lemma: "abandonar" },
   "abeja": { pos: "NOUN", gloss: "bee" },
@@ -15863,10 +15863,10 @@ Format your response as JSON: {"score": NUMBER, "feedback": "TEXT"}`;
   }
 
   _closeMobileSidebar() {
-    if (window.innerWidth <= 767) {
+    const overlay = document.getElementById('sidebar-overlay');
+    if (overlay && window.getComputedStyle(overlay).display !== 'none') {
       document.getElementById('sidebar').classList.remove('sidebar-open');
-      const overlay = document.getElementById('sidebar-overlay');
-      if (overlay) overlay.classList.remove('visible');
+      overlay.classList.remove('visible');
     }
   }
 
