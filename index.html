@@ -14492,7 +14492,7 @@ class App {
     this.init();
   }
 
-  save(key, val) { try { localStorage.setItem("taller_" + key, JSON.stringify(val)); } catch(e) {} }
+  save(key, val) { try { localStorage.setItem("taller_" + key, JSON.stringify(val)); } catch(e) { if (e.name === 'QuotaExceededError') { alert("Storage limit reached! Please export your progress and clear history to avoid data loss."); } } }
   load(key) { try { return JSON.parse(localStorage.getItem("taller_" + key)); } catch(e) { return null; } }
 
   // ===== MULTI-PROVIDER API ABSTRACTION =====
@@ -14529,7 +14529,7 @@ class App {
         "anthropic-dangerous-direct-browser-access": "true"
       },
       body: JSON.stringify({
-        model: model || "claude-sonnet-4-20250514",
+        model: model || "claude-sonnet-4-6",
         max_tokens: maxTokens,
         messages: [{ role: "user", content: prompt }]
       }),
