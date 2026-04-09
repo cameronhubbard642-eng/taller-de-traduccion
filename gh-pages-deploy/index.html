@@ -18465,8 +18465,17 @@ Lesson: ${ex.profile.description}`;
         const idx = parseInt(btn.dataset.msgIdx);
         const msg = this._convMessages[idx];
         if (msg) {
-          speechSynthesis.cancel();
-          this._speakSpanish(msg.content, 0.9);
+          this._stopAllTTS();
+          this._spanishTtsActive = true;
+          btn.style.opacity = '0.5';
+          this._speakSpanish(msg.content, 0.9, () => {
+            // onEnd — reset state
+            this._spanishTtsActive = false;
+            btn.style.opacity = '';
+          }, () => {
+            // onStart — audio is playing
+            btn.style.opacity = '';
+          }, () => this._spanishTtsActive);
         }
       });
     });
