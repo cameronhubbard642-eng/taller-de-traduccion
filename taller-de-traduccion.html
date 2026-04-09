@@ -14567,7 +14567,8 @@ class App {
 
           // Determine POS class: use runtime AUX/MOD if detected, otherwise dictionary POS
           if (auxModRoles.has(tokIdx)) {
-            wrapper.classList.add("pos-" + auxModRoles.get(tokIdx));
+            // AUX/MOD are runtime roles — map to VERB for POS highlighting
+            wrapper.classList.add("pos-VERB");
           } else if (entry) {
             wrapper.classList.add("pos-" + entry.pos);
           }
