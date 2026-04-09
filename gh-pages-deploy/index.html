@@ -2604,6 +2604,7 @@ label:has(input[name="app-icon"]:checked) .icon-option {
       <textarea id="translation-input" placeholder="Enter your English translation here..."></textarea>
     </div>
     <div id="action-row">
+      <button class="action-btn" id="hint-btn" aria-label="Get a hint">Hint</button>
       <button class="action-btn" id="evaluate-btn" aria-label="Evaluate translation">Evaluate</button>
       <button class="action-btn" id="show-reference-btn" aria-label="Show reference translation">Show Reference</button>
       <button class="action-btn" id="next-btn" aria-label="Next exercise">Next &#8594;</button>
@@ -14080,6 +14081,7 @@ class App {
     document.getElementById("gloss-toggle").addEventListener("click", () => this.toggleGlossAll());
     document.getElementById("gloss-hide-toggle").addEventListener("click", () => this.toggleGlossHide());
     // Action buttons
+    document.getElementById("hint-btn").addEventListener("click", () => this.getHint());
     document.getElementById("evaluate-btn").addEventListener("click", () => this.evaluate());
     document.getElementById("show-reference-btn").addEventListener("click", () => this.showReference());
     document.getElementById("next-btn").addEventListener("click", () => this.nextExercise());
@@ -14767,13 +14769,7 @@ class App {
     const key = this.currentText.id + ":" + this.currentExercise.id;
     try {
       if (this.apiKey) {
-        // Check if this is a revision attempt (guided revision mode)
-        if (this._revisionMode) {
-          this._revisionMode = false;
-          await this.evaluateWithAPI(input);
-        } else {
-          await this.evaluateGuidedRevision(input);
-        }
+        await this.evaluateWithAPI(input);
       } else {
         this.evaluateHeuristic(input);
       }
@@ -14805,7 +14801,38 @@ class App {
     }
   }
 
-  async evaluateGuidedRevision(userTranslation) {
+  async getHint() {
+    const input = document.getElementById("translation-input").value.trim();
+    if (!input) return;
+    if (!this.apiKey) {
+      const el = document.getElementById("evaluation-result");
+      el.style.display = "block";
+      el.className = "visible fair";
+      document.getElementById("eval-score").textContent = "";
+      document.getElementById("eval-feedback").innerHTML = "<p>Hints require an LLM API key. Configure one in Settings.</p>";
+      return;
+    }
+
+    const btn = document.getElementById("hint-btn");
+    btn.disabled = true;
+    btn.textContent = "Loading...";
+
+    try {
+      await this.showGuidedHint(input);
+    } catch (e) {
+      console.error("Hint failed:", e);
+      const el = document.getElementById("evaluation-result");
+      el.style.display = "block";
+      el.className = "visible fair";
+      document.getElementById("eval-score").textContent = "";
+      document.getElementById("eval-feedback").innerHTML = "<p>Could not generate hint. Check your API connection and try again.</p>";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Hint";
+    }
+  }
+
+  async showGuidedHint(userTranslation) {
     const ex = this.currentExercise;
     const prompt = `You are a Spanish reading instructor. A student translated a Spanish passage. Identify 2-3 specific problems with their translation WITHOUT providing the correct version. Point to the specific Spanish words or phrases they may have misunderstood. Be constructive and specific. Do not give the answer — let them try again.
 
@@ -14849,8 +14876,8 @@ Format your response as JSON: {"problems": ["problem 1 description", "problem 2 
       html += `<p style="margin:0 0 10px;font-style:italic;color:var(--text-muted);">${result.encouragement}</p>`;
     }
     html += `<div style="display:flex;gap:8px;margin-top:8px;">`;
-    html += `<button class="action-btn" id="revision-revise-btn" style="background:var(--accent);color:white;font-size:12px;">Revise & Resubmit</button>`;
-    html += `<button class="action-btn" id="revision-skip-btn" style="font-size:12px;">Skip to Full Evaluation</button>`;
+    html += `<button class="action-btn" id="revision-revise-btn" style="background:var(--accent);color:white;font-size:12px;">Revise Translation</button>`;
+    html += `<button class="action-btn" id="revision-dismiss-btn" style="font-size:12px;">Dismiss</button>`;
     html += `</div></div>`;
 
     document.getElementById("eval-score").textContent = "";
@@ -14859,27 +14886,10 @@ Format your response as JSON: {"problems": ["problem 1 description", "problem 2 
     // Bind buttons
     document.getElementById("revision-revise-btn").addEventListener("click", () => {
       el.style.display = "none";
-      this._revisionMode = true;
       document.getElementById("translation-input").focus();
     });
-    document.getElementById("revision-skip-btn").addEventListener("click", async () => {
+    document.getElementById("revision-dismiss-btn").addEventListener("click", () => {
       el.style.display = "none";
-      const btn = document.getElementById("evaluate-btn");
-      btn.disabled = true;
-      btn.textContent = "Evaluating...";
-      try {
-        await this.evaluateWithAPI(userTranslation);
-        const key = this.currentText.id + ":" + this.currentExercise.id;
-        this.completed[key] = true;
-        this.save("completed", this.completed);
-        this.renderExerciseList();
-        this.renderProgress();
-      } catch (e) {
-        this.evaluateHeuristic(userTranslation);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Evaluate";
-      }
     });
   }
 
