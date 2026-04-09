@@ -14875,22 +14875,10 @@ Format your response as JSON: {"problems": ["problem 1 description", "problem 2 
     if (result.encouragement) {
       html += `<p style="margin:0 0 10px;font-style:italic;color:var(--text-muted);">${result.encouragement}</p>`;
     }
-    html += `<div style="display:flex;gap:8px;margin-top:8px;">`;
-    html += `<button class="action-btn" id="revision-revise-btn" style="background:var(--accent);color:white;font-size:12px;">Revise Translation</button>`;
-    html += `<button class="action-btn" id="revision-dismiss-btn" style="font-size:12px;">Dismiss</button>`;
-    html += `</div></div>`;
+    html += `</div>`;
 
     document.getElementById("eval-score").textContent = "";
     document.getElementById("eval-feedback").innerHTML = html;
-
-    // Bind buttons
-    document.getElementById("revision-revise-btn").addEventListener("click", () => {
-      el.style.display = "none";
-      document.getElementById("translation-input").focus();
-    });
-    document.getElementById("revision-dismiss-btn").addEventListener("click", () => {
-      el.style.display = "none";
-    });
   }
 
   async evaluateWithAPI(userTranslation) {
