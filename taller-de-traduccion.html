@@ -303,6 +303,11 @@ body {
   pointer-events: none;
 }
 .word-wrapper:hover .tooltip { display: block; }
+.word-wrapper .tooltip.tooltip-below {
+  bottom: auto;
+  top: 100%;
+  margin-top: 2px;
+}
 .word-wrapper .first-gloss {
   display: block;
   font-size: 11px;
@@ -13815,6 +13820,80 @@ const GRAMMAR_LESSONS = [
 ];
 
 
+
+  const GRAMMAR_AUDIO_MAP = {
+    0: "audio/grammar/01_Cognates—Definition.mp3",
+    1: "audio/grammar/02_Nouns—Number, Gender, and Cognate Patterns.mp3",
+    2: "audio/grammar/03_Possession with de.mp3",
+    3: "audio/grammar/04_Adjectives—Cognate Patterns.mp3",
+    4: "audio/grammar/05_Adjective Word Order and Agreement.mp3",
+    5: "audio/grammar/06_Cognate Adverbs.mp3",
+    6: "audio/grammar/07_Cognate Verbs and Past Participles.mp3",
+    7: "audio/grammar/08_The Verb ser. Personal Pronouns.mp3",
+    8: "audio/grammar/09_Assorted Cognates.mp3",
+    9: "audio/grammar/10_Numbers (1–200).mp3",
+    10: "audio/grammar/11_Prepositions, Adverbs, and Conjunctions.mp3",
+    11: "audio/grammar/12_Verbs estar and dar.mp3",
+    12: "audio/grammar/13_Present Tense of -ar Verbs.mp3",
+    13: "audio/grammar/14_Comparisons of Equality.mp3",
+    14: "audio/grammar/15_Superlatives.mp3",
+    15: "audio/grammar/16_Adjectives Used as Nouns.mp3",
+    16: "audio/grammar/17_Numbers (200–1,000,000).mp3",
+    17: "audio/grammar/18_Adverbs (casi, muy, solo, mucho, además).mp3",
+    18: "audio/grammar/19_Present Tense of -er, -ir Verbs.mp3",
+    19: "audio/grammar/20_Ordinal Numbers (1–10).mp3",
+    20: "audio/grammar/21_Verbs tener and influir.mp3",
+    21: "audio/grammar/22_Possessive Adjectives.mp3",
+    22: "audio/grammar/23_Comparisons of Inequality.mp3",
+    23: "audio/grammar/24_Adverbs and Prepositions.mp3",
+    24: "audio/grammar/25_grande/gran and Shortened Adjective Forms.mp3",
+    25: "audio/grammar/26_Estar + Past Participle.mp3",
+    26: "audio/grammar/27_Determiners and Demonstrative Pronouns.mp3",
+    27: "audio/grammar/28_Comparative and Superlative—Irregular Forms.mp3",
+    28: "audio/grammar/29_Unequal Comparisons.mp3",
+    29: "audio/grammar/30_Unequal Comparisons—Irregular Comparative/Superlative.mp3",
+    30: "audio/grammar/31_Ellipses and Pronouns.mp3",
+    31: "audio/grammar/32_Irregular Verbs: o→ue, e→i Stem Changes.mp3",
+    32: "audio/grammar/33_The Verb ir.mp3",
+    33: "audio/grammar/34_Que as a Conjunction.mp3",
+    34: "audio/grammar/35_The Personal a.mp3",
+    35: "audio/grammar/36_Direct and Indirect Object Pronouns.mp3",
+    36: "audio/grammar/37_Reflexive Verbs and Uses of se.mp3",
+    37: "audio/grammar/38_Past Participles Used as Adjectives.mp3",
+    38: "audio/grammar/39_Stem-Changing Verbs e→ie.mp3",
+    39: "audio/grammar/40_Relative Pronouns (que, cuyo, donde, quien).mp3",
+    40: "audio/grammar/41_Weather Expressions with hacer.mp3",
+    41: "audio/grammar/42_Present Perfect Tense.mp3",
+    42: "audio/grammar/43_Imperfect Tense—Regular and Irregular.mp3",
+    43: "audio/grammar/44_Present Participle and Present Progressive.mp3",
+    44: "audio/grammar/45_Commands (Imperative)—Regular Verbs.mp3",
+    45: "audio/grammar/46_Preterite Tense—Regular Verbs.mp3",
+    46: "audio/grammar/47_Negative Words.mp3",
+    47: "audio/grammar/48_Preterite—Irregular u-Stem Verbs.mp3",
+    48: "audio/grammar/49_Preterite of ser, ir, and dar.mp3",
+    49: "audio/grammar/50_More Irregular Preterite Verbs.mp3",
+    50: "audio/grammar/51_Interrogative Pronouns.mp3",
+    51: "audio/grammar/52_Imperfect vs. Preterite (Review).mp3",
+    52: "audio/grammar/53_The Pluperfect Tense.mp3",
+    53: "audio/grammar/54_Future and Future Perfect Tenses.mp3",
+    54: "audio/grammar/55_Indirect Object Constructions with gustar.mp3",
+    55: "audio/grammar/56_Future of Probability and Conjecture.mp3",
+    56: "audio/grammar/57_Pronouns After Prepositions.mp3",
+    57: "audio/grammar/58_The Conditional (Present and Past).mp3",
+    58: "audio/grammar/59_The Conditional (Conjecture or Probability in the Past).mp3",
+    59: "audio/grammar/60_Present Subjunctive—Indirect Commands.mp3",
+    60: "audio/grammar/61_Indicative vs. Subjunctive: Adverbial Conjunctions.mp3",
+    61: "audio/grammar/62_The Present Perfect Subjunctive.mp3",
+    62: "audio/grammar/63_The Passive Voice.mp3",
+    63: "audio/grammar/64_Imperative—Familiar Commands (tú, vosotros).mp3",
+    64: "audio/grammar/65_Imperative—Polite Commands (nosotros, usted, ustedes).mp3",
+    65: "audio/grammar/66_Imperfect Subjunctive—Formation.mp3",
+    66: "audio/grammar/67_Imperfect Subjunctive—Conditional Meanings and Polite Requests.mp3",
+    67: "audio/grammar/68_Imperfect Subjunctive—si Clauses and como si.mp3",
+    68: "audio/grammar/69_Pluperfect Subjunctive.mp3",
+    69: "audio/grammar/70_Comprehensive Review (Chapters 1-14: A Greatest-Hits Grammar Sampling).mp3"
+  };
+
 // ============================================================
 // APPLICATION
 // ============================================================
@@ -14575,6 +14654,18 @@ class App {
               tooltip.className = "tooltip";
               tooltip.textContent = entry.gloss;
               wrapper.appendChild(tooltip);
+              const _flipTooltip = () => {
+                const scrollParent = wrapper.closest("#content-area") || document.documentElement;
+                const wrapperRect = wrapper.getBoundingClientRect();
+                const parentRect = scrollParent.getBoundingClientRect();
+                if (wrapperRect.top - parentRect.top < 36) {
+                  tooltip.classList.add("tooltip-below");
+                } else {
+                  tooltip.classList.remove("tooltip-below");
+                }
+              };
+              wrapper.addEventListener("mouseenter", _flipTooltip);
+              wrapper.addEventListener("touchstart", _flipTooltip, { passive: true });
             }
 
             // Inline gloss on first occurrence or when "All Glosses" is active
@@ -16043,9 +16134,12 @@ Format your response as JSON: {"score": NUMBER, "feedback": "TEXT"}`;
         ttsBtn.addEventListener("click", () => this.toggleLessonTTS(ttsBtn));
       }
       // Pre-fetch audio for this lesson and the next one in sequence
-      if (this._canUseOpenAITTS()) {
+      // Skip prefetch if pre-generated audio files are available
+      const _curIdx = GRAMMAR_LESSONS.indexOf(this.grammarSelectedProfile);
+      const _hasPregen = GRAMMAR_AUDIO_MAP[_curIdx];
+      if (!_hasPregen && this._canUseOpenAITTS()) {
         const profile = this.grammarSelectedProfile;
-        const curIdx = GRAMMAR_LESSONS.indexOf(profile);
+        const curIdx = _curIdx;
         const nextProfile = curIdx >= 0 ? GRAMMAR_LESSONS[curIdx + 1] : null;
         const keepTexts = [
           ...this._chunkTextForTTS(this._getLessonTextFor(profile)),
@@ -16707,12 +16801,42 @@ Format your response as JSON: {"score": NUMBER, "feedback": "TEXT"}`;
     this._ttsBtn = btn;
     btn.innerHTML = "&#8987; Loading&#8230;";
 
-    // If OpenAI provider, use neural TTS for the full lesson
-    if (this._canUseOpenAITTS()) {
+    // Try pre-generated audio file first
+    const lessonIdx = GRAMMAR_LESSONS.indexOf(this.grammarSelectedProfile);
+    const audioFile = GRAMMAR_AUDIO_MAP[lessonIdx];
+    if (audioFile) {
+      this._playPreGeneratedAudio(audioFile, btn);
+    } else if (this._canUseOpenAITTS()) {
       this._lessonTTSWithOpenAI(cleanText);
     } else {
       this._ttsReadVerbatim(cleanText);
     }
+  }
+
+  _playPreGeneratedAudio(audioFile, btn) {
+    const audio = new Audio(audioFile);
+    audio.onerror = () => {
+      // File not available — fall back to existing TTS
+      console.warn("Pre-generated audio not found:", audioFile);
+      const cleanText = this._getLessonText();
+      if (this._canUseOpenAITTS()) {
+        this._lessonTTSWithOpenAI(cleanText);
+      } else {
+        this._ttsReadVerbatim(cleanText);
+      }
+    };
+    audio.oncanplaythrough = () => {
+      if (!this._ttsActive) return; // User stopped before load finished
+      btn.innerHTML = "&#10074;&#10074; Pause";
+      audio.play();
+    };
+    audio.onended = () => {
+      this._ttsActive = false;
+      this._lessonTtsPaused = false;
+      this._ttsAudio = null;
+      if (btn) btn.innerHTML = "&#9654; Listen to Lesson";
+    };
+    this._ttsAudio = audio;
   }
 
   async _lessonTTSWithOpenAI(text) {
