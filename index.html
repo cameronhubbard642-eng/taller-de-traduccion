@@ -14474,7 +14474,7 @@ class App {
     this.grammarParadigmVisible = false;
     this.grammarRetrying = false;
     // TTS audio pre-fetch cache
-    this._ttsCache = new Map();        // text → Blob (null = fetch in progress)
+    this._ttsCache = new Map();        // text → ObjectURL string (null = fetch in progress)
     this._ttsPrefetchQueue = [];
     this._ttsPrefetchActive = false;
     // Pause/resume state for each TTS context
@@ -16289,7 +16289,11 @@ Format your response as JSON: {"score": NUMBER, "feedback": "TEXT"}`;
     try {
       const prompt = `Generate exactly 3 short example sentences using the Spanish word "${item.spanish}" (${item.english}). Each sentence should be 6-12 words, use natural Spanish, and suit an intermediate learner. After each Spanish sentence, provide the English translation in parentheses. Format as a numbered list. Do not include any other text.`;
       const text = await this.llmComplete(prompt, { maxTokens: 512 });
-      area.innerHTML = `<div style="text-align:left;font-size:12px;line-height:1.7;margin-top:8px;padding:8px 12px;background:var(--bg);border-radius:6px;border:1px solid var(--border);">${text.replace(/\n/g, "<br>")}</div>`;
+      const div = document.createElement("div");
+      div.style.cssText = "text-align:left;font-size:12px;line-height:1.7;white-space:pre-wrap;margin-top:8px;padding:8px 12px;background:var(--bg);border-radius:6px;border:1px solid var(--border);";
+      div.appendChild(document.createTextNode(text));
+      area.innerHTML = "";
+      area.appendChild(div);
     } catch (e) {
       area.innerHTML = `<div style="font-size:11px;color:var(--error);">Could not load examples: ${this.escapeHtml(e.message)}</div>`;
     }
@@ -16923,14 +16927,17 @@ Format your response as JSON: {"score": NUMBER, "feedback": "TEXT"}`;
         body: JSON.stringify({ model: "tts-1", input: text, voice: "nova", speed: 0.95 })
       });
       if (!response.ok) throw new Error("TTS prefetch error: " + response.status);
-      return await response.blob();
+      const blob = await response.blob();
+      return URL.createObjectURL(blob);
     })();
     this._ttsCache.set(text, fetchPromise);
     try {
-      const blob = await fetchPromise;
-      // Only promote to Blob if not evicted while we were waiting
+      const url = await fetchPromise;
+      // Only promote to ObjectURL if not evicted while we were waiting
       if (this._ttsCache.get(text) === fetchPromise) {
-        this._ttsCache.set(text, blob);
+        this._ttsCache.set(text, url);
+      } else {
+        URL.revokeObjectURL(url); // evicted while fetching — release immediately
       }
     } catch (e) {
       // Remove the Promise so the text can be retried later
@@ -16962,8 +16969,11 @@ Format your response as JSON: {"score": NUMBER, "feedback": "TEXT"}`;
 
   _evictTTSCache(keepTexts) {
     const keep = new Set(keepTexts || []);
-    for (const key of [...this._ttsCache.keys()]) {
-      if (!keep.has(key)) this._ttsCache.delete(key);
+    for (const [key, value] of [...this._ttsCache.entries()]) {
+      if (!keep.has(key)) {
+        if (typeof value === "string") URL.revokeObjectURL(value);
+        this._ttsCache.delete(key);
+      }
     }
     this._ttsPrefetchQueue = this._ttsPrefetchQueue.filter(t => keep.has(t));
   }
@@ -17009,37 +17019,35 @@ Format your response as JSON: {"score": NUMBER, "feedback": "TEXT"}`;
     // (prevents a stale lesson/spanish/vocab fetch from playing after a different context took over)
 
     // Check in-memory cache first for instant playback.
-    // Cache values are: undefined (miss), Promise (prefetch in progress), or Blob (ready).
+    // Cache values are: undefined (miss), Promise (prefetch in progress), or ObjectURL string (ready).
     const cached = this._ttsCache.get(text);
     if (cached !== undefined) {
-      let cachedBlob;
+      let cachedUrl;
       try {
-        // Await the Promise if prefetch is in progress; use Blob directly if ready.
-        cachedBlob = (cached instanceof Promise) ? await cached : cached;
+        // Await the Promise if prefetch is in progress; use ObjectURL directly if ready.
+        cachedUrl = (cached instanceof Promise) ? await cached : cached;
       } catch (e) {
         // Prefetch failed — fall through to a fresh on-demand fetch below.
-        cachedBlob = null;
+        cachedUrl = null;
       }
-      if (cachedBlob instanceof Blob) {
+      if (typeof cachedUrl === "string") {
         // Bail if user stopped while we were waiting for the prefetch Promise
         if (isActive ? !isActive() : (!this._ttsActive && !this._spanishTtsActive && !this._vocabTtsActive)) return;
-        const url = URL.createObjectURL(cachedBlob);
-        const audio = new Audio(url);
-        audio.onended = () => { URL.revokeObjectURL(url); if (onEnd) onEnd(); };
-        audio.onerror = () => { URL.revokeObjectURL(url); if (onEnd) onEnd(); };
+        const audio = new Audio(cachedUrl);
+        audio.onended = () => { if (onEnd) onEnd(); };
+        audio.onerror = () => { if (onEnd) onEnd(); };
         this._ttsAudio = audio;
         this._ttsAbort = null;
         if (onStart) onStart();
         try {
           await audio.play();
         } catch (playErr) {
-          URL.revokeObjectURL(url);
           console.warn("Audio play failed:", playErr);
           if (onEnd) onEnd("fallback");
         }
         return;
       }
-      // cachedBlob is null (prefetch errored) — fall through to fresh fetch
+      // cachedUrl is null (prefetch errored) — fall through to fresh fetch
     }
 
     try {
@@ -17068,18 +17076,19 @@ Format your response as JSON: {"score": NUMBER, "feedback": "TEXT"}`;
       const blob = await response.blob();
       // Bail out if the user navigated/stopped while the response body was downloading
       if (isActive ? !isActive() : (!this._ttsActive && !this._spanishTtsActive && !this._vocabTtsActive)) { this._ttsAbort = null; return; }
-      // Store in cache for potential replay (keyed by text, voice-agnostic since we always use nova)
-      if (!this._ttsCache.has(text)) {
-        this._ttsCache.set(text, blob);
-      }
+      // Store ObjectURL in cache for potential replay (keyed by text, voice-agnostic since we always use nova)
       const url = URL.createObjectURL(blob);
+      if (!this._ttsCache.has(text)) {
+        this._ttsCache.set(text, url); // cache takes ownership
+      }
+      const urlOwnedByCache = this._ttsCache.get(text) === url;
       const audio = new Audio(url);
       audio.onended = () => {
-        URL.revokeObjectURL(url);
+        if (!urlOwnedByCache) URL.revokeObjectURL(url);
         if (onEnd) onEnd();
       };
       audio.onerror = () => {
-        URL.revokeObjectURL(url);
+        if (!urlOwnedByCache) URL.revokeObjectURL(url);
         if (onEnd) onEnd();
       };
       // Store reference so Stop button can pause it
@@ -17089,7 +17098,7 @@ Format your response as JSON: {"score": NUMBER, "feedback": "TEXT"}`;
       try {
         await audio.play();
       } catch (playErr) {
-        URL.revokeObjectURL(url);
+        if (!urlOwnedByCache) URL.revokeObjectURL(url);
         console.warn("Audio play failed:", playErr);
         if (onEnd) onEnd("fallback");
         return;
@@ -18638,7 +18647,12 @@ Lesson: ${ex.profile.description}`;
       const text = await this.llmComplete(prompt, { maxTokens: 256 });
       area.style.fontStyle = "normal";
       area.style.color = "var(--text)";
-      area.innerHTML = `<strong style="font-size:11px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;">Why this is wrong</strong>${text}`;
+      const header = document.createElement("strong");
+      header.style.cssText = "font-size:11px;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px;";
+      header.textContent = "Why this is wrong";
+      area.innerHTML = "";
+      area.appendChild(header);
+      area.appendChild(document.createTextNode(text));
     } catch (e) {
       area.remove();
     }
